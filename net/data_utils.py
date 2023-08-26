@@ -32,25 +32,24 @@ def tensorShow(tensors,titles=None):
             ax.set_title(tit)
         plt.show()
 
-class RESIDE_Dataset(data.Dataset):
+class RSHAZE_Dataset(data.Dataset):
     def __init__(self,path,train,size=crop_size,format='.png'):
-        super(RESIDE_Dataset,self).__init__()
+        super(RSHAZE_Dataset,self).__init__()
         self.size=size
         print('crop size',size)
         self.train=train
         self.format=format
-        self.haze_imgs_dir=os.listdir(os.path.join(path,'hazy'))
-        self.haze_imgs=[os.path.join(path,'hazy',img) for img in self.haze_imgs_dir]
-        self.clear_dir=os.path.join(path,'clear')
+        self.haze_imgs_dir=os.listdir(os.path.join(path,'input'))
+        self.haze_imgs=[os.path.join(path,'input',img) for img in self.haze_imgs_dir]
+        self.clear_dir=os.path.join(path,'gt')
     def __getitem__(self, index):
         haze=Image.open(self.haze_imgs[index])
         if isinstance(self.size,int):
             while haze.size[0]<self.size or haze.size[1]<self.size :
-                index=random.randint(0,20000)
-                haze=Image.open(self.haze_imgs[index])
+                index=random.randint(0,9000)
+                haze=Image.open(self.haze_imgs[index])        
         img=self.haze_imgs[index]
-        id=img.split('/')[-1].split('_')[0]
-        clear_name=id+self.format
+        clear_name=img.split('/')[-1]
         clear=Image.open(os.path.join(self.clear_dir,clear_name))
         clear=tfs.CenterCrop(haze.size[::-1])(clear)
         if not isinstance(self.size,str):
@@ -78,13 +77,16 @@ class RESIDE_Dataset(data.Dataset):
 import os
 pwd=os.getcwd()
 print(pwd)
-path='/home/zhilin007/VS/FFA-Net/data'#path to your 'data' folder
+path='/home/louanqi/pycharmp/data'#path to your 'data' folder
 
-ITS_train_loader=DataLoader(dataset=RESIDE_Dataset(path+'/RESIDE/ITS',train=True,size=crop_size),batch_size=BS,shuffle=True)
-ITS_test_loader=DataLoader(dataset=RESIDE_Dataset(path+'/RESIDE/SOTS/indoor',train=False,size='whole img'),batch_size=1,shuffle=False)
+RSHAZE_train_loader=DataLoader(dataset=RSHAZE_Dataset(path+'/rshaze/train',train=True,size=crop_size),batch_size=BS,shuffle=True)
+RSHAZE_test_loader=DataLoader(dataset=RSHAZE_Dataset(path+'/rshaze/test',train=False,size='whole img'),batch_size=1,shuffle=False)
 
-OTS_train_loader=DataLoader(dataset=RESIDE_Dataset(path+'/RESIDE/OTS',train=True,format='.jpg'),batch_size=BS,shuffle=True)
-OTS_test_loader=DataLoader(dataset=RESIDE_Dataset(path+'/RESIDE/SOTS/outdoor',train=False,size='whole img',format='.png'),batch_size=1,shuffle=False)
+# ITS_train_loader=DataLoader(dataset=RESIDE_Dataset(path+'/RESIDE/ITS',train=True,size=crop_size),batch_size=BS,shuffle=True)
+# ITS_test_loader=DataLoader(dataset=RESIDE_Dataset(path+'/RESIDE/SOTS/indoor',train=False,size='whole img'),batch_size=1,shuffle=False)
+
+# OTS_train_loader=DataLoader(dataset=RESIDE_Dataset(path+'/RESIDE/OTS',train=True,format='.jpg'),batch_size=BS,shuffle=True)
+# OTS_test_loader=DataLoader(dataset=RESIDE_Dataset(path+'/RESIDE/SOTS/outdoor',train=False,size='whole img',format='.png'),batch_size=1,shuffle=False)
 
 if __name__ == "__main__":
     pass

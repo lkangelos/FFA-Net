@@ -20,7 +20,7 @@ def tensorShow(tensors,titles=['haze']):
         plt.show()
 
 parser=argparse.ArgumentParser()
-parser.add_argument('--task',type=str,default='its',help='its or ots')
+parser.add_argument('--task',type=str,default='rshaze',help='its or ots')
 parser.add_argument('--test_imgs',type=str,default='test_imgs',help='Test imgs folder')
 opt=parser.parse_args()
 dataset=opt.task
